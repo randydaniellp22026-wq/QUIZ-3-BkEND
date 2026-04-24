@@ -28,11 +28,17 @@ CREATE TABLE usuario (
 CREATE TABLE libro (
     id_libro INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(155),
-    id_autor INT,
     id_editorial INT,
     año_publicacion INT,
-    FOREIGN KEY (id_autor) REFERENCES autor(id_autor),
     FOREIGN KEY (id_editorial) REFERENCES editorial(id_editorial)
+);
+
+CREATE TABLE libro_autor (
+    id_libro_autor INT AUTO_INCREMENT PRIMARY KEY,
+    id_libro INT,
+    id_autor INT,
+    FOREIGN KEY (id_libro) REFERENCES libro(id_libro),
+    FOREIGN KEY (id_autor) REFERENCES autor(id_autor)
 );
 
 CREATE TABLE libro_categoria (
@@ -75,9 +81,12 @@ INSERT INTO usuario (nombre, correo, fecha_registro) VALUES
 ('Steven Profe', 'Steven.@academia.com', '2026-04-21 11:30:00'),
 ('Luis Dev', 'luis.@gmail.com', NOW());
 
-INSERT INTO libro (titulo, id_autor, id_editorial, año_publicacion) VALUES 
-('Cien años de soledad', 1, 1, 1967), ('La casa de los espíritus', 2, 2, 1982),
-('Harry Potter y la piedra filosofal', 3, 3, 1997), ('Juego de Tronos', 4, 4, 1996);
+INSERT INTO libro (titulo, id_editorial, año_publicacion) VALUES 
+('Cien años de soledad', 1, 1967), ('La casa de los espíritus', 2, 1982),
+('Harry Potter y la piedra filosofal', 3, 1997), ('Juego de Tronos', 4, 1996);
+
+INSERT INTO libro_autor (id_libro, id_autor) VALUES 
+(1, 1), (2, 2), (3, 3), (4, 4);
 
 INSERT INTO libro_categoria (id_categoria, id_libro) VALUES 
 (1, 1), (1, 2), (2, 3), (2, 4), (4, 3);
@@ -100,7 +109,8 @@ LIMIT 5;
 -- 4. Mostrar libros con su autor
 SELECT libro.titulo AS "Nombre del titulo", autor.nombre AS "Nombre del autor"
 FROM libro
-JOIN autor ON libro.id_autor = autor.id_autor;
+JOIN libro_autor ON libro.id_libro = libro_autor.id_libro
+JOIN autor ON libro_autor.id_autor = autor.id_autor;
 
 -- 5. Mostrar libros con su editorial
 SELECT libro.titulo AS "Nombre del titulo", editorial.nombre AS Editorial
